@@ -33,7 +33,8 @@ namespace extra_extra.Steps
         [When(@"I press search")]
         public void WhenIPressSearch()
         {
-            ScenarioContext.Current.Pending();
+            var queryButton = _startingWindow.Get<Button>("ButtonQuery");
+            queryButton.Click();
         }
 
         [Then(@"it should fetch query results")]

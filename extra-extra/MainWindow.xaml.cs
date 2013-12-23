@@ -24,5 +24,14 @@ namespace extra_extra
         {
             InitializeComponent();
         }
+
+        private void ButtonQuery_Click(object sender, RoutedEventArgs e)
+        {
+            
+
+
+
+
+        }
     }
 }
