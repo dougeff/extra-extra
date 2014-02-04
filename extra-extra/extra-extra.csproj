@@ -126,9 +126,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="images\newspaper.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="newspaper.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
