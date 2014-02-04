@@ -71,14 +71,25 @@ namespace extra_extra
                 {
                     continue;
                 }
+                var guidNode = xmlNode.SelectNodes("guid");
+                if (guidNode == null)
+                {
+                    continue;
+                }
                 var articleTitle = titleNode.Item(0);
                 if (articleTitle == null)
                 {
                     continue;
                 }
+                var articleId = guidNode.Item(0);
+                if (articleId == null)
+                {
+                    continue;
+                }
                 var treeViewItem = new TreeViewItem
                     {
-                        Header = articleTitle.InnerText
+                        Header = articleTitle.InnerText,
+                        Uid = articleId.InnerText
                     };
 
                 queryHeader.Items.Add(treeViewItem);
