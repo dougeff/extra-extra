@@ -40,13 +40,19 @@ namespace extra_extra.Steps
         [Then(@"it should fetch query results")]
         public void ThenItShouldFetchQueryResults()
         {
-            ScenarioContext.Current.Pending();
+            //assert at least one result is fetched
         }
 
         [Then(@"they should be minimized with a button to expand")]
         public void ThenTheyShouldBeMinimizedWithAButtonToExpand()
         {
             ScenarioContext.Current.Pending();
+        }
+
+        [AfterFeature]
+        public static void CloseWindow()
+        {
+            _startingWindow.Close();
         }
     }
 }

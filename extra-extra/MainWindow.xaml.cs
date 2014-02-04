@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml;
 
 namespace extra_extra
 {
@@ -27,7 +29,71 @@ namespace extra_extra
 
         private void ButtonQuery_Click(object sender, RoutedEventArgs e)
         {
+            var queryToGet = TextQuery.Text;
+            var feedUrl = String.Format("http://news.google.com/news?pz=1&cf-all&ned=us&hl=en&q={0}&cf=all&output=rss",
+                            queryToGet);
+
+            var xml = new XmlDocument();
+            string str;
+            try
+            {
+                xml.Load(feedUrl);
+            }
+            catch (Exception ex)
+            {
+                str = ex.ToString();
+                TextQuery.Text = str;
+            }
+
+//            var sw = new StringWriter();
+//            var tx = new XmlTextWriter(sw);
+//            xml.WriteTo(tx);
+//
+//            str = sw.ToString();
             
+            var xmlNodes = xml.SelectNodes("//item");
+            if (xmlNodes == null)
+            {
+                return;
+            }
+
+            var queryHeader = new TreeViewItem
+                {
+                    Header = queryToGet
+                };
+
+            TreeItemsList.Items.Add(queryHeader);
+
+            foreach (XmlNode xmlNode in xmlNodes)
+            {
+                var titleNode = xmlNode.SelectNodes("title");
+                if (titleNode == null)
+                {
+                    continue;
+                }
+                var articleTitle = titleNode.Item(0);
+                if (articleTitle == null)
+                {
+                    continue;
+                }
+                var treeViewItem = new TreeViewItem
+                    {
+                        Header = articleTitle.InnerText
+                    };
+
+                queryHeader.Items.Add(treeViewItem);
+            }
+
+
+            //todo: working on add results to some kind of list
+
+            
+
+
+            
+
+
+
 
 
 
