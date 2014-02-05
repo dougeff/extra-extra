@@ -6,7 +6,7 @@ Scenario: Get Query Results
 	Given I have entered text into the query field
 	When I press search
 	Then it should fetch query results
-	And they should be minimized with a button to expand
+	And the results number should be displayed
 
 Scenario: Refresh Query Results
 	Given I have a query result

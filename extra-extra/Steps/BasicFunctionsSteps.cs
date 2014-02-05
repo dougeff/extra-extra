@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Controls;
+using Should;
 using TechTalk.SpecFlow;
 using TestStack.White;
 using TestStack.White.UIItems;
 using TestStack.White.UIItems.WindowItems;
+using Button = TestStack.White.UIItems.Button;
+using TextBox = TestStack.White.UIItems.TextBox;
 
 namespace extra_extra.Steps
 {
@@ -14,12 +18,14 @@ namespace extra_extra.Steps
     {
         private static Application _applicationToTest;
         private static Window _startingWindow;
+        private static string _queryText;
 
         [BeforeFeature]
         public static void LaunchApp()
         {
             _applicationToTest = Application.Launch(@"..\..\..\extra-extra\bin\Debug\extra-extra.exe");
             _startingWindow = _applicationToTest.GetWindow("Extra Extra");
+            _queryText = "blah";
         }
 
 
@@ -27,7 +33,7 @@ namespace extra_extra.Steps
         public void GivenIHaveEnteredTextIntoTheQueryField()
         {
             var textQuery = _startingWindow.Get<TextBox>("TextQuery");
-            textQuery.Enter("blah");
+            textQuery.Enter(_queryText);
         }
 
         [When(@"I press search")]
@@ -40,13 +46,15 @@ namespace extra_extra.Steps
         [Then(@"it should fetch query results")]
         public void ThenItShouldFetchQueryResults()
         {
-            //assert at least one result is fetched
+            var queryResult = _startingWindow.Get<IUIItem>(_queryText);
+            queryResult.ShouldNotBeNull();
         }
 
-        [Then(@"they should be minimized with a button to expand")]
-        public void ThenTheyShouldBeMinimizedWithAButtonToExpand()
+        [Then(@"the results number should be displayed")]
+        public void ThenTheResultsNumberShouldBeDisplayed()
         {
-            ScenarioContext.Current.Pending();
+            var queryResult = _startingWindow.Get<IUIItem>(_queryText);
+            queryResult.Name.ShouldContain("results returned");
         }
 
         [AfterFeature]

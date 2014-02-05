@@ -56,18 +56,24 @@ namespace extra_extra
             {
                 return;
             }
-
+            
             var queryHeader = new TreeViewItem
                 {
-                    Header = queryToGet
+                    Header = string.Format("{0} - {1} results returned", queryToGet, xmlNodes.Count),
+                    Name = queryToGet
                 };
 
             TreeItemsList.Items.Add(queryHeader);
-
+            var itemCount = 0;
             foreach (XmlNode xmlNode in xmlNodes)
             {
                 var titleNode = xmlNode.SelectNodes("title");
                 if (titleNode == null)
+                {
+                    continue;
+                }
+                var guidNode = xmlNode.SelectNodes("guid");
+                if (guidNode == null)
                 {
                     continue;
                 }
@@ -76,9 +82,15 @@ namespace extra_extra
                 {
                     continue;
                 }
+                var articleId = guidNode.Item(0);
+                if (articleId == null)
+                {
+                    continue;
+                }
                 var treeViewItem = new TreeViewItem
                     {
-                        Header = articleTitle.InnerText
+                        Header = string.Format("{0}. {1}", ++itemCount, articleTitle.InnerText),
+                        Uid = articleId.InnerText
                     };
 
                 queryHeader.Items.Add(treeViewItem);
