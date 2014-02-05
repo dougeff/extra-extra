@@ -56,14 +56,15 @@ namespace extra_extra
             {
                 return;
             }
-
+            
             var queryHeader = new TreeViewItem
                 {
-                    Header = queryToGet
+                    Header = string.Format("{0} - {1} results returned", queryToGet, xmlNodes.Count),
+                    Name = queryToGet
                 };
 
             TreeItemsList.Items.Add(queryHeader);
-
+            var itemCount = 0;
             foreach (XmlNode xmlNode in xmlNodes)
             {
                 var titleNode = xmlNode.SelectNodes("title");
@@ -88,7 +89,7 @@ namespace extra_extra
                 }
                 var treeViewItem = new TreeViewItem
                     {
-                        Header = articleTitle.InnerText,
+                        Header = string.Format("{0}. {1}", ++itemCount, articleTitle.InnerText),
                         Uid = articleId.InnerText
                     };
 

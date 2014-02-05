@@ -80,7 +80,7 @@ this.ScenarioSetup(scenarioInfo);
 #line 8
  testRunner.Then("it should fetch query results", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line 9
- testRunner.And("they should be minimized with a button to expand", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("the results number should be displayed", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             this.ScenarioCleanup();
         }
