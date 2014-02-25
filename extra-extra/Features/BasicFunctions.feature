@@ -8,6 +8,26 @@ Scenario: Get Query Results
 	Then it should fetch query results
 	And the results number should be displayed
 
+Scenario: Query results should not duplicate
+	Given I have a query result
+	When I press search
+	Then it should not redisplay the results
+
+Scenario: Query items should not duplicate in query results
+	Given I have a query result
+	When I press search
+	Then it should not redisplay the same items
+
+Scenario: Query should not fetch blank
+	Given I have left the text field blank
+	When I press search
+	Then it should not fetch query results
+
+Scenario: Query should not fetch default text
+	Given I have not entered text into the query field
+	When I press search
+	Then it should not fetch query results
+
 Scenario: Refresh Query Results
 	Given I have a query result
 	And I have set the time interval
@@ -22,11 +42,6 @@ Scenario: Update Icon with new Results Total
 	When the interval ends
 	Then it should update the icon with a total of new results found
 
-Scenario: Results should be empty when program starts
-	Given I double-clicked the icon
-	When the program starts
-	Then the results should be empty
-
 Scenario: Results should be clickable
 	Given I have a query result
 	When I click one of the results
@@ -37,18 +52,6 @@ Scenario: Result should disappear if deleted
 	When I click the delete button
 	Then the query result should disappear
 	And never be fetched again
-
-Scenario: Result should be maximized when maximize button is clicked
-	Given I have a query result
-	And it is minimized
-	When I click the maximize button
-	Then it should be maximized
-
-Scenario: Result should be minimized when minimize button is clicked
-	Given I have a query result
-	And it is maximized
-	When I click the minimize button
-	Then it should be minimized
 
 Scenario: Fetching should cease when time interval is being changed
 	Given I have set the time interval
