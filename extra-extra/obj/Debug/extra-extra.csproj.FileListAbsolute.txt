@@ -19,3 +19,5 @@ C:\Users\Doug\documents\visual studio 2012\Projects\extra-extra\extra-extra\obj\
 C:\Users\Doug\documents\visual studio 2012\Projects\extra-extra\extra-extra\obj\Debug\extra-extra.exe
 C:\Users\Doug\documents\visual studio 2012\Projects\extra-extra\extra-extra\obj\Debug\extra-extra.pdb
 C:\Users\Doug\Documents\Visual Studio 2012\Projects\extra-extra\extra-extra\bin\Debug\Should.dll
+C:\Users\Doug\Documents\Visual Studio 2012\Projects\extra-extra\extra-extra\bin\Debug\Moq.dll
+C:\Users\Doug\Documents\Visual Studio 2012\Projects\extra-extra\extra-extra\bin\Debug\Moq.xml
