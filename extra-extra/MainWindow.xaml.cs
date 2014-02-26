@@ -42,7 +42,7 @@ namespace extra_extra
             var queryToGet = TextQuery.Text;
             var feedUrl = String.Format("http://news.google.com/news?pz=1&cf-all&ned=us&hl=en&q={0}&cf=all&output=rss",
                                         queryToGet);
-
+            //System.Diagnostics.Debugger.Launch();
             var xml = new XmlDocument();
             try
             {
