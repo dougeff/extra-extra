@@ -62,12 +62,13 @@ namespace extra_extra
 
             TreeViewItem queryHeader, foundQueryHeader = null;
             var queryHeaderNameFound = false;
+            var queryHeaderItemUidFound = false;
             var queryHeaderName = char.ToUpper(queryToGet[0]) + queryToGet.Replace(" ", "").Substring(1);
 
             foreach (var treeListItemName in TreeItemsList.Items.Cast<FrameworkElement>())
             {
-                var foundTreeQueryHeaderName = treeListItemName.Name;
-                if (foundTreeQueryHeaderName != queryHeaderName)
+                var foundName = treeListItemName.Name;
+                if (foundName != queryHeaderName)
                 {
                     continue;
                 }
@@ -111,13 +112,27 @@ namespace extra_extra
                 {
                     continue;
                 }
-                var queryList = new TreeViewItem
+                var uid = articleId.InnerText;
+
+                foreach (TreeViewItem queryHeaderItem in queryHeader.Items)
+                {
+                    var foundUid = queryHeaderItem.Uid;
+                    if (foundUid != uid)
                     {
-                        Header = string.Format("{0}. {1}", ++itemCount, articleTitle.InnerText),
-                        Uid = articleId.InnerText
+                        continue;
+                    }
+                    queryHeaderItemUidFound = true;
+                }
+                ++itemCount;
+                if (queryHeaderItemUidFound == false)
+                {
+                    var queryList = new TreeViewItem
+                    {
+                        Header = string.Format("{0}. {1}", itemCount, articleTitle.InnerText),
+                        Uid = uid
                     };
-                //todo: don't duplicate already added items
-                queryHeader.Items.Add(queryList);
+                    queryHeader.Items.Add(queryList);
+                }
             }
             if (itemCount > 0)
             {
