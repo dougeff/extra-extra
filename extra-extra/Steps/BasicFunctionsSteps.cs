@@ -92,6 +92,18 @@ namespace extra_extra.Steps
             queryResultNodes.Count().ShouldEqual(1);
         }
 
+        [Then(@"it should not redisplay the same items")]
+        public void ThenItShouldNotRedisplayTheSameItems()
+        {
+            var queryResults = _startingWindow.Get<TreeNode>(_queryText);
+            queryResults.Expand();
+            var firstNodeId = queryResults.Nodes[0].Id;
+            var queryResultNodes =
+               from qrNodes in queryResults.Nodes.Where(queryResultNodesId => queryResultNodesId.Id == firstNodeId)
+               select qrNodes;
+            queryResultNodes.Count().ShouldEqual(1);
+        }
+
         [When(@"the interval ends")]
         public void WhenTheIntervalEnds()
         {
