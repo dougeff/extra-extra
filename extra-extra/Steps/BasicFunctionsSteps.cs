@@ -82,6 +82,20 @@ namespace extra_extra.Steps
             queryResult.ShouldNotBeNull();
         }
 
+        [Given(@"I have left the text field blank")]
+        public void GivenIHaveLeftTheTextFieldBlank()
+        {
+            var textQuery = _startingWindow.Get<TextBox>("TextQuery");
+            textQuery.Click();
+        }
+
+        [Then(@"it should not fetch query results")]
+        public void ThenItShouldNotFetchQueryResults()
+        {
+            var queryResults = _startingWindow.Get<Tree>("TreeItemsList");
+            queryResults.Nodes.Count().ShouldEqual(0);
+        }
+
         [Then(@"it should not redisplay the results")]
         public void ThenItShouldNotRedisplayTheResults()
         {

@@ -40,115 +40,118 @@ namespace extra_extra
         private void FetchResults()
         {
             var queryToGet = TextQuery.Text;
-            var feedUrl = String.Format("http://news.google.com/news?pz=1&cf-all&ned=us&hl=en&q={0}&cf=all&output=rss",
-                                        queryToGet);
-            //System.Diagnostics.Debugger.Launch();
-            var xml = new XmlDocument();
-            try
+            if (queryToGet.Length > 0 && queryToGet != "Enter your query here")
             {
-                xml.Load(feedUrl);
-            }
-            catch (Exception ex)
-            {
-                var str = ex.ToString();
-                TextQuery.Text = str;
-            }
-
-            var xmlNodes = xml.SelectNodes("//item");
-            if (xmlNodes == null)
-            {
-                return;
-            }
-
-            TreeViewItem queryHeader, foundQueryHeader = null;
-            var queryHeaderNameFound = false;
-            var queryHeaderItemUidFound = false;
-            var queryHeaderName = char.ToUpper(queryToGet[0]) + queryToGet.Replace(" ", "").Substring(1);
-
-            foreach (var treeListItemName in TreeItemsList.Items.Cast<FrameworkElement>())
-            {
-                var foundName = treeListItemName.Name;
-                if (foundName != queryHeaderName)
+                var feedUrl = String.Format("http://news.google.com/news?pz=1&cf-all&ned=us&hl=en&q={0}&cf=all&output=rss",
+                            queryToGet);
+                //System.Diagnostics.Debugger.Launch();
+                var xml = new XmlDocument();
+                try
                 {
-                    continue;
+                    xml.Load(feedUrl);
                 }
-                queryHeaderNameFound = true;
-                foundQueryHeader = (TreeViewItem) treeListItemName;
-            }
+                catch (Exception ex)
+                {
+                    var str = ex.ToString();
+                    TextQuery.Text = str;
+                }
 
-            if (queryHeaderNameFound)
-            {
-                queryHeader = foundQueryHeader;
-            }
-            else
-            {
-                queryHeader = new TreeViewItem
+                var xmlNodes = xml.SelectNodes("//item");
+                if (xmlNodes == null)
                 {
-                    Header = string.Format("{0} - {1} results returned", queryToGet, xmlNodes.Count),
-                    Name = queryHeaderName
-                };
-            }
-            
-            var itemCount = 0;
-            foreach (XmlNode xmlNode in xmlNodes)
-            {
-                var titleNode = xmlNode.SelectNodes("title");
-                if (titleNode == null)
-                {
-                    continue;
+                    return;
                 }
-                var guidNode = xmlNode.SelectNodes("guid");
-                if (guidNode == null)
-                {
-                    continue;
-                }
-                var articleTitle = titleNode.Item(0);
-                if (articleTitle == null)
-                {
-                    continue;
-                }
-                var articleId = guidNode.Item(0);
-                if (articleId == null)
-                {
-                    continue;
-                }
-                var uid = articleId.InnerText;
 
-                foreach (TreeViewItem queryHeaderItem in queryHeader.Items)
+                TreeViewItem queryHeader, foundQueryHeader = null;
+                var queryHeaderNameFound = false;
+                var queryHeaderItemUidFound = false;
+                var queryHeaderName = char.ToUpper(queryToGet[0]) + queryToGet.Replace(" ", "").Substring(1);
+
+                foreach (var treeListItemName in TreeItemsList.Items.Cast<FrameworkElement>())
                 {
-                    var foundUid = queryHeaderItem.Uid;
-                    if (foundUid != uid)
+                    var foundName = treeListItemName.Name;
+                    if (foundName != queryHeaderName)
                     {
                         continue;
                     }
-                    queryHeaderItemUidFound = true;
+                    queryHeaderNameFound = true;
+                    foundQueryHeader = (TreeViewItem)treeListItemName;
                 }
-                ++itemCount;
-                if (queryHeaderItemUidFound == false)
+
+                if (queryHeaderNameFound)
                 {
-                    var queryList = new TreeViewItem
+                    queryHeader = foundQueryHeader;
+                }
+                else
+                {
+                    queryHeader = new TreeViewItem
                     {
-                        Header = string.Format("{0}. {1}", itemCount, articleTitle.InnerText),
-                        Uid = uid
+                        Header = string.Format("{0} - {1} results returned", queryToGet, xmlNodes.Count),
+                        Name = queryHeaderName
                     };
-                    queryHeader.Items.Add(queryList);
                 }
-            }
-            if (itemCount > 0)
-            {
-                if (!queryHeaderNameFound)
+
+                var itemCount = 0;
+                foreach (XmlNode xmlNode in xmlNodes)
                 {
-                    TreeItemsList.Items.Add(queryHeader);
+                    var titleNode = xmlNode.SelectNodes("title");
+                    if (titleNode == null)
+                    {
+                        continue;
+                    }
+                    var guidNode = xmlNode.SelectNodes("guid");
+                    if (guidNode == null)
+                    {
+                        continue;
+                    }
+                    var articleTitle = titleNode.Item(0);
+                    if (articleTitle == null)
+                    {
+                        continue;
+                    }
+                    var articleId = guidNode.Item(0);
+                    if (articleId == null)
+                    {
+                        continue;
+                    }
+                    var uid = articleId.InnerText;
+
+                    foreach (TreeViewItem queryHeaderItem in queryHeader.Items)
+                    {
+                        var foundUid = queryHeaderItem.Uid;
+                        if (foundUid != uid)
+                        {
+                            continue;
+                        }
+                        queryHeaderItemUidFound = true;
+                    }
+                    ++itemCount;
+                    if (queryHeaderItemUidFound == false)
+                    {
+                        var queryList = new TreeViewItem
+                        {
+                            Header = string.Format("{0}. {1}", itemCount, articleTitle.InnerText),
+                            Uid = uid
+                        };
+                        queryHeader.Items.Add(queryList);
+                    }
                 }
-            }
-            else
-            {
-                var nothingReturned = new TreeViewItem
+                if (itemCount > 0)
                 {
-                    Header = string.Format("Nothing found for {0}", queryToGet),
-                    Name = queryToGet
-                };
-                TreeItemsList.Items.Add(nothingReturned);
+                    if (!queryHeaderNameFound)
+                    {
+                        TreeItemsList.Items.Add(queryHeader);
+                    }
+                }
+                else
+                {
+                    var nothingReturned = new TreeViewItem
+                    {
+                        Header = string.Format("Nothing found for {0}", queryToGet),
+                        Name = queryToGet
+                    };
+                    TreeItemsList.Items.Add(nothingReturned);
+                }
             }
         }
 
