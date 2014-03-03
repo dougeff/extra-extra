@@ -22,7 +22,7 @@ Scenario: Query should not fetch blank or default text
 	Given I have left the text field blank
 	When I press search
 	Then it should not fetch query results
-
+	
 Scenario: Refresh Query Results
 	Given I have a query result
 	And I have set the time interval
