@@ -18,13 +18,8 @@ Scenario: Query items should not duplicate in query results
 	When I press search
 	Then it should not redisplay the same items
 
-Scenario: Query should not fetch blank
+Scenario: Query should not fetch blank or default text
 	Given I have left the text field blank
-	When I press search
-	Then it should not fetch query results
-
-Scenario: Query should not fetch default text
-	Given I have not entered text into the query field
 	When I press search
 	Then it should not fetch query results
 
