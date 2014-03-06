@@ -44,19 +44,6 @@ namespace extra_extra.Steps
             Given(@"I have entered text into the query field");
             And(@"I press search");
             And(@"it should fetch query results");
-
-
-            //var queryResultHeader = new TreeViewItem
-            //    {
-            //        Header = string.Format("{0} - {1} results returned", _queryText, 1),
-            //        Name = _queryText
-            //    };
-            //var queryResultList = new TreeViewItem
-            //{
-            //    Header = string.Format("{0}. {1}", 1, "Blah Headline 1"),
-            //    Uid = "1"
-            //};
-            //queryResultHeader.Items.Add(queryResultList);
         }
 
         [Given(@"I have set the time interval")]
@@ -89,6 +76,24 @@ namespace extra_extra.Steps
             textQuery.Click();
         }
 
+        [When(@"I click one of the results")]
+        public void WhenIClickOneOfTheResults()
+        {
+            var queryResults = _startingWindow.Get<TreeNode>(_queryText);
+            queryResults.Expand();
+            var firstNode = queryResults.Nodes[0];
+            firstNode.Click();
+        }
+
+        [Then(@"it should take me to a website")]
+        public void ThenItShouldTakeMeToAWebsite()
+        {
+
+
+
+
+        }
+
         [Then(@"it should not fetch query results")]
         public void ThenItShouldNotFetchQueryResults()
         {
@@ -116,13 +121,6 @@ namespace extra_extra.Steps
                from qrNodes in queryResults.Nodes.Where(queryResultNodesId => queryResultNodesId.Id == firstNodeId)
                select qrNodes;
             queryResultNodes.Count().ShouldEqual(1);
-        }
-
-        [When(@"the interval ends")]
-        public void WhenTheIntervalEnds()
-        {
-
-            ScenarioContext.Current.Pending();
         }
 
         [Then(@"the results number should be displayed")]

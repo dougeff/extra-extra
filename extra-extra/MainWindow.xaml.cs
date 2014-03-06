@@ -115,6 +115,16 @@ namespace extra_extra
                         continue;
                     }
                     var uid = articleId.InnerText;
+                    var linkNode = xmlNode.SelectNodes("link");
+                    if (linkNode == null)
+                    {
+                        continue;
+                    }
+                    var webLink = linkNode.Item(0);
+                    if (webLink == null)
+                    {
+                        continue;
+                    }
 
                     foreach (TreeViewItem queryHeaderItem in queryHeader.Items)
                     {
@@ -126,15 +136,18 @@ namespace extra_extra
                         queryHeaderItemUidFound = true;
                     }
                     ++itemCount;
-                    if (queryHeaderItemUidFound == false)
+                    if (queryHeaderItemUidFound)
                     {
-                        var queryList = new TreeViewItem
+                        continue;
+                    }
+                    var queryList = new TreeViewItem
                         {
                             Header = string.Format("{0}. {1}", itemCount, articleTitle.InnerText),
-                            Uid = uid
+                            Uid = uid,
+                            Tag = webLink.InnerText
                         };
-                        queryHeader.Items.Add(queryList);
-                    }
+                    queryList.Selected += ListItemClick;
+                    queryHeader.Items.Add(queryList);
                 }
                 if (itemCount > 0)
                 {
@@ -233,6 +246,13 @@ namespace extra_extra
                 Content = "1 Hour",
                 Tag = new TimeSpan(1, 0, 0)
             });
+        }
+
+        private static void ListItemClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var clickedItem = (FrameworkElement) sender;
+            var website = clickedItem.Tag;
+            System.Diagnostics.Process.Start(website.ToString());
         }
     }
 }
