@@ -44,7 +44,7 @@ namespace extra_extra
             {
                 var feedUrl = String.Format("http://news.google.com/news?pz=1&cf-all&ned=us&hl=en&q={0}&cf=all&output=rss",
                             queryToGet);
-                //System.Diagnostics.Debugger.Launch();
+                
                 var xml = new XmlDocument();
                 try
                 {
@@ -252,7 +252,11 @@ namespace extra_extra
         {
             var clickedItem = (FrameworkElement) sender;
             var website = clickedItem.Tag;
-            System.Diagnostics.Process.Start(website.ToString());
+            var windowWebBrowser = new WebBrowser();
+            windowWebBrowser.Show();
+            windowWebBrowser.WebBrowserWindow.Navigate(website.ToString());
+            //System.Diagnostics.Debugger.Launch();
+            //System.Diagnostics.Process.Start(website.ToString());
         }
     }
 }

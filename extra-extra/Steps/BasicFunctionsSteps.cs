@@ -20,7 +20,7 @@ namespace extra_extra.Steps
     public class BasicFunctionsSteps : TechTalk.SpecFlow.Steps
     {
         private static Application _applicationToTest;
-        private static Window _startingWindow;
+        private static Window _startingWindow, _webWindow;
         private static string _queryText;
 
         [BeforeFeature]
@@ -28,6 +28,7 @@ namespace extra_extra.Steps
         {
             _applicationToTest = Application.Launch(@"..\..\..\extra-extra\bin\Debug\extra-extra.exe");
             _startingWindow = _applicationToTest.GetWindow("Extra Extra");
+            _webWindow = _applicationToTest.GetWindow("WebBrowser");
             _queryText = "Blah";
         }
 
