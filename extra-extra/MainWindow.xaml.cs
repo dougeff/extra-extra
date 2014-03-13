@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,6 +16,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml;
+using mshtml;
+
 
 namespace extra_extra
 {
@@ -24,12 +27,13 @@ namespace extra_extra
     public partial class MainWindow
     {
         private readonly DispatcherTimer _dispatcherTimer;
-
+        private readonly WebBrowser _windowWebBrowser;
         public MainWindow()
         {
             InitializeComponent();
             _dispatcherTimer = new DispatcherTimer();
             PopulateTimeIntervals();
+            _windowWebBrowser = new WebBrowser();
         }
 
         private void ButtonQuery_Click(object sender, RoutedEventArgs e)
@@ -44,7 +48,7 @@ namespace extra_extra
             {
                 var feedUrl = String.Format("http://news.google.com/news?pz=1&cf-all&ned=us&hl=en&q={0}&cf=all&output=rss",
                             queryToGet);
-                //System.Diagnostics.Debugger.Launch();
+                
                 var xml = new XmlDocument();
                 try
                 {
@@ -115,6 +119,16 @@ namespace extra_extra
                         continue;
                     }
                     var uid = articleId.InnerText;
+                    var linkNode = xmlNode.SelectNodes("link");
+                    if (linkNode == null)
+                    {
+                        continue;
+                    }
+                    var webLink = linkNode.Item(0);
+                    if (webLink == null)
+                    {
+                        continue;
+                    }
 
                     foreach (TreeViewItem queryHeaderItem in queryHeader.Items)
                     {
@@ -126,15 +140,18 @@ namespace extra_extra
                         queryHeaderItemUidFound = true;
                     }
                     ++itemCount;
-                    if (queryHeaderItemUidFound == false)
+                    if (queryHeaderItemUidFound)
                     {
-                        var queryList = new TreeViewItem
+                        continue;
+                    }
+                    var queryList = new TreeViewItem
                         {
                             Header = string.Format("{0}. {1}", itemCount, articleTitle.InnerText),
-                            Uid = uid
+                            Uid = uid,
+                            Tag = webLink.InnerText
                         };
-                        queryHeader.Items.Add(queryList);
-                    }
+                    queryList.Selected += ListItemClick;
+                    queryHeader.Items.Add(queryList);
                 }
                 if (itemCount > 0)
                 {
@@ -233,6 +250,39 @@ namespace extra_extra
                 Content = "1 Hour",
                 Tag = new TimeSpan(1, 0, 0)
             });
+        }
+
+        private void ListItemClick(object sender, RoutedEventArgs routedEventArgs)
+        {
+            var clickedItem = (FrameworkElement) sender;
+            var website = clickedItem.Tag;
+            _windowWebBrowser.Show();
+            _windowWebBrowser.WebBrowserWindow.Navigate(website.ToString());
+            _windowWebBrowser.WebBrowserWindow.Navigated += InjectDisableScript;
+            //System.Diagnostics.Debugger.Launch();
+            //System.Diagnostics.Process.Start(website.ToString());
+        }
+
+        private void InjectDisableScript(object sender, NavigationEventArgs e)
+        {
+            var loadedWebsite = _windowWebBrowser.WebBrowserWindow.Document as HTMLDocument;
+            var htmlToLoad = _windowWebBrowser.WebBrowserWindow.Document as HTMLDocument;
+           
+            if (htmlToLoad == null)
+            {
+                throw new InvalidOperationException("htmlToLoad was not created");
+            }
+            var scriptErrorSuppressed = (IHTMLScriptElement)htmlToLoad.createElement("SCRIPT");
+            scriptErrorSuppressed.type = "text/javascript";
+            scriptErrorSuppressed.text = @"function noError() { return true; } window.onerror = noError;";
+
+            var nodes = loadedWebsite.getElementsByTagName("head");
+
+            foreach (IHTMLElement elem in nodes)
+            {
+                var head = (HTMLHeadElement)elem;
+                head.appendChild((IHTMLDOMNode)scriptErrorSuppressed);
+            }
         }
     }
 }
