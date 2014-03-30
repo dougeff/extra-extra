@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Management;
 using System.Text;
+using System.Threading;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using Should;
 using TechTalk.SpecFlow;
 using TestStack.White;
@@ -20,7 +25,7 @@ namespace extra_extra.Steps
     public class BasicFunctionsSteps : TechTalk.SpecFlow.Steps
     {
         private static Application _applicationToTest;
-        private static Window _startingWindow, _webWindow;
+        private static Window _startingWindow;
         private static string _queryText;
 
         [BeforeFeature]
@@ -29,6 +34,15 @@ namespace extra_extra.Steps
             _applicationToTest = Application.Launch(@"..\..\..\extra-extra\bin\Debug\extra-extra.exe");
             _startingWindow = _applicationToTest.GetWindow("Extra Extra");
             _queryText = "Blah";
+            CloseChrome();
+        }
+
+        private static void CloseChrome()
+        {
+            foreach (var process in Process.GetProcessesByName("chrome").Where(process => !process.HasExited))
+            {
+                process.Kill();
+            }
         }
 
         [Given(@"I have entered text into the query field")]
@@ -88,11 +102,10 @@ namespace extra_extra.Steps
         [Then(@"it should take me to a website")]
         public void ThenItShouldTakeMeToAWebsite()
         {
-            _webWindow = _applicationToTest.GetWindow("WebBrowser");
-            var websiteClosed = _webWindow.IsClosed;
-            websiteClosed.ShouldBeFalse();
-            _webWindow.Close();
-            _webWindow.Dispose();
+            Thread.Sleep(1000);
+            var chromeId = Process.GetProcessesByName("chrome").Select(p => p.Id).FirstOrDefault();
+            chromeId.ShouldBeGreaterThan(0);
+            CloseChrome();
         }
 
         [Then(@"it should not fetch query results")]

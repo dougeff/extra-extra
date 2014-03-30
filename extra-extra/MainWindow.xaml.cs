@@ -27,13 +27,12 @@ namespace extra_extra
     public partial class MainWindow
     {
         private readonly DispatcherTimer _dispatcherTimer;
-        private readonly WebBrowser _windowWebBrowser;
+
         public MainWindow()
         {
             InitializeComponent();
             _dispatcherTimer = new DispatcherTimer();
             PopulateTimeIntervals();
-            _windowWebBrowser = new WebBrowser();
         }
 
         private void ButtonQuery_Click(object sender, RoutedEventArgs e)
@@ -252,37 +251,12 @@ namespace extra_extra
             });
         }
 
-        private void ListItemClick(object sender, RoutedEventArgs routedEventArgs)
+        private static void ListItemClick(object sender, RoutedEventArgs routedEventArgs)
         {
             var clickedItem = (FrameworkElement) sender;
             var website = clickedItem.Tag;
-            _windowWebBrowser.Show();
-            _windowWebBrowser.WebBrowserWindow.Navigate(website.ToString());
-            _windowWebBrowser.WebBrowserWindow.Navigated += InjectDisableScript;
             //System.Diagnostics.Debugger.Launch();
-            //System.Diagnostics.Process.Start(website.ToString());
-        }
-
-        private void InjectDisableScript(object sender, NavigationEventArgs e)
-        {
-            var loadedWebsite = _windowWebBrowser.WebBrowserWindow.Document as HTMLDocument;
-            var htmlToLoad = _windowWebBrowser.WebBrowserWindow.Document as HTMLDocument;
-           
-            if (htmlToLoad == null)
-            {
-                throw new InvalidOperationException("htmlToLoad was not created");
-            }
-            var scriptErrorSuppressed = (IHTMLScriptElement)htmlToLoad.createElement("SCRIPT");
-            scriptErrorSuppressed.type = "text/javascript";
-            scriptErrorSuppressed.text = @"function noError() { return true; } window.onerror = noError;";
-
-            var nodes = loadedWebsite.getElementsByTagName("head");
-
-            foreach (IHTMLElement elem in nodes)
-            {
-                var head = (HTMLHeadElement)elem;
-                head.appendChild((IHTMLDOMNode)scriptErrorSuppressed);
-            }
+            System.Diagnostics.Process.Start(website.ToString());
         }
     }
 }
