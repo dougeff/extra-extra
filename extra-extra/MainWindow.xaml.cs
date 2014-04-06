@@ -28,12 +28,15 @@ namespace extra_extra
     public partial class MainWindow
     {
         private readonly DispatcherTimer _dispatcherTimer;
+        private static String _googleUrl, _defaultText;
 
         public MainWindow()
         {
             InitializeComponent();
             _dispatcherTimer = new DispatcherTimer();
             PopulateTimeIntervals();
+            _googleUrl = "http://news.google.com/news?pz=1&cf-all&ned=us&hl=en&q={0}&cf=all&output=rss";
+            _defaultText = "Enter your query here";
         }
 
         private void ButtonQuery_Click(object sender, RoutedEventArgs e)
@@ -44,10 +47,9 @@ namespace extra_extra
         private void FetchResults()
         {
             var queryToGet = TextQuery.Text;
-            if (queryToGet.Length > 0 && queryToGet != "Enter your query here")
+            if (queryToGet.Length > 0 && queryToGet != _defaultText)
             {
-                var feedUrl = String.Format("http://news.google.com/news?pz=1&cf-all&ned=us&hl=en&q={0}&cf=all&output=rss",
-                            queryToGet);
+                var feedUrl = String.Format(_googleUrl, queryToGet);
                 
                 var xml = new XmlDocument();
                 try
@@ -174,7 +176,7 @@ namespace extra_extra
 
         private void TextQuery_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (TextQuery.Text == "Enter your query here")
+            if (TextQuery.Text == _defaultText)
             {
                 TextQuery.Text = "";
             }
@@ -184,7 +186,7 @@ namespace extra_extra
         {
             if (TextQuery.Text == "")
             {
-                TextQuery.Text = "Enter your query here";
+                TextQuery.Text = _defaultText;
             }
         }
 
