@@ -69,22 +69,19 @@ namespace extra_extra
                 }
 
                 TreeViewItem queryHeader, foundQueryHeader = null;
-                var queryHeaderNameFound = false;
                 var queryHeaderItemUidFound = false;
                 var queryHeaderName = char.ToUpper(queryToGet[0]) + queryToGet.Replace(" ", "").Substring(1);
 
                 foreach (var treeListItemName in TreeItemsList.Items.Cast<FrameworkElement>())
                 {
-                    var foundName = treeListItemName.Name;
-                    if (foundName != queryHeaderName)
+                    if (treeListItemName.Name != queryHeaderName)
                     {
                         continue;
                     }
-                    queryHeaderNameFound = true;
                     foundQueryHeader = (TreeViewItem)treeListItemName;
                 }
 
-                if (queryHeaderNameFound)
+                if (foundQueryHeader != null)
                 {
                     queryHeader = foundQueryHeader;
                 }
@@ -134,8 +131,7 @@ namespace extra_extra
 
                     foreach (TreeViewItem queryHeaderItem in queryHeader.Items)
                     {
-                        var foundUid = queryHeaderItem.Uid;
-                        if (foundUid != uid)
+                        if (queryHeaderItem.Uid != uid)
                         {
                             continue;
                         }
@@ -157,7 +153,7 @@ namespace extra_extra
                 }
                 if (itemCount > 0)
                 {
-                    if (!queryHeaderNameFound)
+                    if (foundQueryHeader == null)
                     {
                         TreeItemsList.Items.Add(queryHeader);
                     }
