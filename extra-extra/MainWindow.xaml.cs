@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -256,7 +257,15 @@ namespace extra_extra
             var clickedItem = (FrameworkElement) sender;
             var website = clickedItem.Tag;
             //System.Diagnostics.Debugger.Launch();
-            System.Diagnostics.Process.Start(website.ToString());
+            var browserToLaunch = ConfigurationManager.AppSettings["browserToLaunch"];
+            if (String.IsNullOrEmpty(browserToLaunch))
+            {
+                System.Diagnostics.Process.Start(website.ToString());
+            }
+            else
+            {
+                System.Diagnostics.Process.Start(browserToLaunch, website.ToString());
+            }
         }
     }
 }

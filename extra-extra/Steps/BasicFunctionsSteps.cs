@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
@@ -27,19 +28,30 @@ namespace extra_extra.Steps
         private static Application _applicationToTest;
         private static Window _startingWindow;
         private static string _queryText;
+        private static string _browserToLaunch;
 
         [BeforeFeature]
         public static void LaunchApp()
         {
+            _browserToLaunch = "chrome";
+            ChangeConfig();
             _applicationToTest = Application.Launch(@"..\..\..\extra-extra\bin\Debug\extra-extra.exe");
             _startingWindow = _applicationToTest.GetWindow("Extra Extra");
             _queryText = "Blah";
-            CloseChrome();
+            CloseBrowser();
         }
 
-        private static void CloseChrome()
+        private static void ChangeConfig()
         {
-            foreach (var process in Process.GetProcessesByName("chrome").Where(process => !process.HasExited))
+            var configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            configuration.AppSettings.Settings["browserToLaunch"].Value = _browserToLaunch;
+            configuration.Save();
+            ConfigurationManager.RefreshSection("appsettings");
+        }
+
+        private static void CloseBrowser()
+        {
+            foreach (var process in Process.GetProcessesByName(_browserToLaunch).Where(process => !process.HasExited))
             {
                 process.Kill();
             }
@@ -103,9 +115,9 @@ namespace extra_extra.Steps
         public void ThenItShouldTakeMeToAWebsite()
         {
             Thread.Sleep(1000);
-            var chromeId = Process.GetProcessesByName("chrome").Select(p => p.Id).FirstOrDefault();
-            chromeId.ShouldBeGreaterThan(0);
-            CloseChrome();
+            var browserId = Process.GetProcessesByName(_browserToLaunch).Select(p => p.Id).FirstOrDefault();
+            browserId.ShouldBeGreaterThan(0);
+            CloseBrowser();
         }
 
         [Then(@"it should not fetch query results")]
@@ -147,6 +159,8 @@ namespace extra_extra.Steps
         [AfterFeature]
         public static void CloseWindow()
         {
+            _browserToLaunch = "";
+            ChangeConfig();
             _startingWindow.Close();
         }
     }
