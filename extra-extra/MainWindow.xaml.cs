@@ -215,41 +215,7 @@ namespace extra_extra
 
         private void PopulateTimeIntervals()
         {
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "Off",
-                Tag = new TimeSpan(0, 0, 0)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "30 Seconds",
-                Tag = new TimeSpan(0, 0, 30)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "1 Minute",
-                Tag = new TimeSpan(0, 1, 0)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "5 Minutes",
-                Tag = new TimeSpan(0, 5, 0)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "15 Minutes",
-                Tag = new TimeSpan(0, 15, 0)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "30 Minutes",
-                Tag = new TimeSpan(0, 30, 0)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "1 Hour",
-                Tag = new TimeSpan(1, 0, 0)
-            });
+            SelectInterval.DataContext = TimeInterval.GetIntervals();
         }
 
         private static void ListItemClick(object sender, RoutedEventArgs routedEventArgs)
