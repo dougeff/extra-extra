@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -27,12 +28,15 @@ namespace extra_extra
     public partial class MainWindow
     {
         private readonly DispatcherTimer _dispatcherTimer;
+        private static String _googleUrl, _defaultText;
 
         public MainWindow()
         {
             InitializeComponent();
             _dispatcherTimer = new DispatcherTimer();
             PopulateTimeIntervals();
+            _googleUrl = "http://news.google.com/news?pz=1&cf-all&ned=us&hl=en&q={0}&cf=all&output=rss";
+            _defaultText = "Enter your query here";
         }
 
         private void ButtonQuery_Click(object sender, RoutedEventArgs e)
@@ -43,10 +47,9 @@ namespace extra_extra
         private void FetchResults()
         {
             var queryToGet = TextQuery.Text;
-            if (queryToGet.Length > 0 && queryToGet != "Enter your query here")
+            if (queryToGet.Length > 0 && queryToGet != _defaultText)
             {
-                var feedUrl = String.Format("http://news.google.com/news?pz=1&cf-all&ned=us&hl=en&q={0}&cf=all&output=rss",
-                            queryToGet);
+                var feedUrl = String.Format(_googleUrl, queryToGet);
                 
                 var xml = new XmlDocument();
                 try
@@ -66,22 +69,19 @@ namespace extra_extra
                 }
 
                 TreeViewItem queryHeader, foundQueryHeader = null;
-                var queryHeaderNameFound = false;
                 var queryHeaderItemUidFound = false;
                 var queryHeaderName = char.ToUpper(queryToGet[0]) + queryToGet.Replace(" ", "").Substring(1);
 
                 foreach (var treeListItemName in TreeItemsList.Items.Cast<FrameworkElement>())
                 {
-                    var foundName = treeListItemName.Name;
-                    if (foundName != queryHeaderName)
+                    if (treeListItemName.Name != queryHeaderName)
                     {
                         continue;
                     }
-                    queryHeaderNameFound = true;
                     foundQueryHeader = (TreeViewItem)treeListItemName;
                 }
 
-                if (queryHeaderNameFound)
+                if (foundQueryHeader != null)
                 {
                     queryHeader = foundQueryHeader;
                 }
@@ -131,8 +131,7 @@ namespace extra_extra
 
                     foreach (TreeViewItem queryHeaderItem in queryHeader.Items)
                     {
-                        var foundUid = queryHeaderItem.Uid;
-                        if (foundUid != uid)
+                        if (queryHeaderItem.Uid != uid)
                         {
                             continue;
                         }
@@ -154,7 +153,7 @@ namespace extra_extra
                 }
                 if (itemCount > 0)
                 {
-                    if (!queryHeaderNameFound)
+                    if (foundQueryHeader == null)
                     {
                         TreeItemsList.Items.Add(queryHeader);
                     }
@@ -173,7 +172,7 @@ namespace extra_extra
 
         private void TextQuery_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (TextQuery.Text == "Enter your query here")
+            if (TextQuery.Text == _defaultText)
             {
                 TextQuery.Text = "";
             }
@@ -183,7 +182,7 @@ namespace extra_extra
         {
             if (TextQuery.Text == "")
             {
-                TextQuery.Text = "Enter your query here";
+                TextQuery.Text = _defaultText;
             }
         }
 
@@ -214,41 +213,7 @@ namespace extra_extra
 
         private void PopulateTimeIntervals()
         {
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "Off",
-                Tag = new TimeSpan(0, 0, 0)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "30 Seconds",
-                Tag = new TimeSpan(0, 0, 30)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "1 Minute",
-                Tag = new TimeSpan(0, 1, 0)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "5 Minutes",
-                Tag = new TimeSpan(0, 5, 0)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "15 Minutes",
-                Tag = new TimeSpan(0, 15, 0)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "30 Minutes",
-                Tag = new TimeSpan(0, 30, 0)
-            });
-            SelectInterval.Items.Add(new ComboBoxItem
-            {
-                Content = "1 Hour",
-                Tag = new TimeSpan(1, 0, 0)
-            });
+            SelectInterval.DataContext = TimeInterval.GetIntervals();
         }
 
         private static void ListItemClick(object sender, RoutedEventArgs routedEventArgs)
@@ -256,7 +221,15 @@ namespace extra_extra
             var clickedItem = (FrameworkElement) sender;
             var website = clickedItem.Tag;
             //System.Diagnostics.Debugger.Launch();
-            System.Diagnostics.Process.Start(website.ToString());
+            var browserToLaunch = ConfigurationManager.AppSettings["browserToLaunch"];
+            if (String.IsNullOrEmpty(browserToLaunch))
+            {
+                System.Diagnostics.Process.Start(website.ToString());
+            }
+            else
+            {
+                System.Diagnostics.Process.Start(browserToLaunch, website.ToString());
+            }
         }
     }
 }

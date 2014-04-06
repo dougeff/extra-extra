@@ -7,7 +7,7 @@
         <Button x:Name="ButtonQuery" Margin="612,10,10,279" Click="ButtonQuery_Click" Content="Fetch Query Results" RenderTransformOrigin="2.888,-1.214"/>
         <Separator Margin="612,52,10,253"></Separator>
         <Label Margin="612,0,10,221" VerticalAlignment="Bottom" Height="26">Select Fetch Interval:</Label>
-        <ComboBox Margin="612,93,10,197" Name="SelectInterval" SelectedIndex="0" SelectionChanged="SelectInterval_SelectionChanged">
+        <ComboBox Margin="612,93,10,197" ItemsSource="{Binding}" Name="SelectInterval" SelectedIndex="0" SelectionChanged="SelectInterval_SelectionChanged">
         </ComboBox>
         <TreeView Margin="10,128,10,10" Name="TreeItemsList">
         </TreeView>
