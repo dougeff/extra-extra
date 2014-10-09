@@ -1,0 +1,15 @@
+<rss version="2.0">
+	<channel>
+		<item>
+			<title>Dummy Item Title</title>
+			<description>Dummy Item Description</description>
+      <link>
+        http://news.blah.com
+      </link>
+      <guid isPermaLink="false">
+        tag:news.blah.com
+      </guid>
+		</item>
+		<description>Dummy Feed Description</description>
+	</channel>
+</rss>

@@ -28,45 +28,112 @@ namespace extra_extra
     public partial class MainWindow
     {
         private readonly DispatcherTimer _dispatcherTimer;
-        private static String _googleUrl, _defaultText;
+        private static String _defaultText, _fetchUrl;
 
         public MainWindow()
         {
             InitializeComponent();
             _dispatcherTimer = new DispatcherTimer();
             PopulateTimeIntervals();
-            _googleUrl = "http://news.google.com/news?pz=1&cf-all&ned=us&hl=en&q={0}&cf=all&output=rss";
             _defaultText = "Enter your query here";
+            _fetchUrl = ConfigurationManager.AppSettings["searchUrl"];
         }
 
         private void ButtonQuery_Click(object sender, RoutedEventArgs e)
         {
-            FetchResults();
-        }
-
-        private void FetchResults()
-        {
+            //FetchResults(TextQuery.Text);
             var queryToGet = TextQuery.Text;
             if (queryToGet.Length > 0 && queryToGet != _defaultText)
             {
-                var feedUrl = String.Format(_googleUrl, queryToGet);
-                
-                var xml = new XmlDocument();
-                try
-                {
-                    xml.Load(feedUrl);
-                }
-                catch (Exception ex)
-                {
-                    var str = ex.ToString();
-                    TextQuery.Text = str;
-                }
+                var resultsFetched = FetchXml(_fetchUrl, TextQuery.Text);
+            }
+        }
 
-                var xmlNodes = xml.SelectNodes("//item");
-                if (xmlNodes == null)
+        internal static XmlNodeList FetchXml(string url, string query)
+        {
+            var feedUrl = String.Format(url, query);
+            var xml = new XmlDocument();
+
+            try
+            {
+                xml.Load(feedUrl);
+            }
+            catch (Exception)
+            {
+                return new EmptyXmlNodeList();
+            }
+
+            var xmlNodes = xml.SelectNodes("//item");
+            return xmlNodes ?? new EmptyXmlNodeList();
+        }
+
+        internal static string GetUid(XmlNode xmlNode)
+        {
+            var uid = string.Empty;
+            var guidNode = xmlNode.SelectNodes("guid");
+            if (guidNode != null)
+            {
+                var articleId = guidNode.Item(0);
+                if (articleId != null)
                 {
-                    return;
+                    uid = articleId.InnerText.Trim();
                 }
+            }
+            return uid;
+        }
+
+        public static Hyperlink GetLink(XmlNode xmlNode)
+        {
+            var link = new Hyperlink();
+            var linkNode = xmlNode.SelectNodes("link");
+            if (linkNode != null)
+            {
+                var webLink = linkNode.Item(0);
+                if (webLink != null)
+                {
+                    link.NavigateUri = new Uri(webLink.InnerText.Trim());
+                }
+            }
+            return link;
+        }
+
+        internal static string GetTitle(XmlNode xmlNode)
+        {
+            var title = string.Empty;
+            var titleNode = xmlNode.SelectNodes("title");
+            if (titleNode != null)
+            {
+                var articleTitle = titleNode.Item(0);
+                if (articleTitle != null)
+                {
+                    title = articleTitle.InnerText.Trim();
+                }
+            }
+            return title;
+        }
+
+        internal static TreeViewItem GetTreeHeader(string query, TreeView treeView)
+        {
+            var queryHeaderName = char.ToUpper(query[0]) + query.Replace(" ", "").Substring(1);
+            var foundQueryHeader = new TreeViewItem();
+            foreach (var treeListItemName in treeView.Items.Cast<FrameworkElement>()
+                .Where(treeListItemName => treeListItemName.Name == queryHeaderName))
+            {
+                foundQueryHeader = (TreeViewItem)treeListItemName;
+            }
+            return foundQueryHeader;
+        }
+
+/*
+        public void FetchResults(string queryToGet)
+        {
+            //todo:  must try to break this up for unit testing 
+            if (queryToGet.Length > 0 && queryToGet != _defaultText)
+            {
+                var feedUrl = String.Format(_googleUrl, queryToGet);
+
+                var xmlWrapper = new XmlWrapper();
+                var xmlNodes = xmlWrapper.FetchXml(feedUrl);
 
                 TreeViewItem queryHeader, foundQueryHeader = null;
                 var queryHeaderItemUidFound = false;
@@ -169,7 +236,7 @@ namespace extra_extra
                 }
             }
         }
-
+        */
         private void TextQuery_GotFocus(object sender, RoutedEventArgs e)
         {
             if (TextQuery.Text == _defaultText)
@@ -208,7 +275,8 @@ namespace extra_extra
 
         private void dispatcherTimer_Tick(object sender, EventArgs e)
         {
-            FetchResults();
+            //FetchResults(TextQuery.Text);
+            FetchXml(_fetchUrl, TextQuery.Text);
         }
 
         private void PopulateTimeIntervals()
