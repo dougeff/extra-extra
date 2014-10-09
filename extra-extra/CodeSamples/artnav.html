@@ -1,0 +1,93 @@
+<!doctype html>
+<html ng-app="artNavApp">
+    <head>
+        <meta charset="utf-8">
+        <title>nav</title>
+        <script src="//cdn.jsdelivr.net/lodash/2.4.1/lodash.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.min.js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+        <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+        <script src="artControllers.js"></script>
+        <script>
+        $(function() {
+            $( "#menu" ).menu();
+            $( "#menu2" ).menu();
+        });
+        </script>
+        <style>
+        .ui-menu { width: 175px; }
+        .li-clicked { font-style: italic; text-transform: uppercase; }
+        </style>
+    </head>
+    <body ng-controller="NavListController as navListCtrl">
+        <p>
+            <ul id="menu">
+                <li ng-class="{'li-clicked': navListCtrl.clickedItems.Art}" ng-click="navListCtrl.getAllClasses('Art');" id="Art">Art
+                    <ul>
+                        <li ng-class="{'li-clicked': navListCtrl.clickedItems.Ceramics}" ng-click="navListCtrl.getAllClasses('Ceramics'); $event.stopPropagation();" id="Ceramics">Ceramics
+                            <ul>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.Wheel}" ng-click="navListCtrl.updateList('Wheel'); $event.stopPropagation();" id="Wheel">Wheel</li>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.HandbuildingWheel}" ng-click="navListCtrl.updateList('Handbuilding Wheel'); $event.stopPropagation();" id="HandbuildingWheel">Handbuilding Wheel</li>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.VirtualClay}" ng-click="navListCtrl.updateList('Virtual Clay'); $event.stopPropagation();" id="VirtualClay">Virtual Clay</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </p>
+
+        <p>
+            <ul id="menu2">
+                <li ng-class="{'li-clicked': navListCtrl.clickedItems.Art2}" ng-click="navListCtrl.getAllClasses('Art2');" id="Art2">More Art
+                    <ul>
+                        <li ng-class="{'li-clicked': navListCtrl.clickedItems.Jewelry}" ng-click="navListCtrl.getAllClasses('Jewelry'); $event.stopPropagation();" id="Jewelry">Jewelry
+                            <ul>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.ClassicalGoldsmithing}"  ng-click="navListCtrl.updateList('Classical Goldsmithing'); $event.stopPropagation();" id="ClassicalGoldsmithing">Classical Goldsmithing</li>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.Stonesetting}"  ng-click="navListCtrl.updateList('Stonesetting'); $event.stopPropagation();" id="Stonesetting">Stonesetting</li>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.Enameling}"  ng-click="navListCtrl.updateList('Enameling'); $event.stopPropagation();" id="Enameling">Enameling</li>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.WaxCarving}"  ng-click="navListCtrl.updateList('Wax Carving'); $event.stopPropagation();" id="WaxCarving">Wax Carving</li>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.Metalsmithing}"  ng-click="navListCtrl.updateList('Metalsmithing'); $event.stopPropagation();" id="Metalsmithing">Metalsmithing</li>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.PreciousMetalClay}"  ng-click="navListCtrl.updateList('Precious Metal Clay'); $event.stopPropagation();" id="PreciousMetalClay">Precious Metal Clay</li>
+                            </ul>
+                        </li>
+                        <li ng-class="{'li-clicked': navListCtrl.clickedItems.FineArt}" ng-click="navListCtrl.getAllClasses('Fine Art'); $event.stopPropagation();" id="FineArt">Fine Art
+                            <ul>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.Painting}"  ng-click="navListCtrl.updateList('Painting'); $event.stopPropagation();" id="Painting">Painting</li>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.Drawing}"  ng-click="navListCtrl.updateList('Drawing'); $event.stopPropagation();" id="Drawing">Drawing</li>
+                                <li ng-class="{'li-clicked': navListCtrl.clickedItems.MixedMedia}"  ng-click="navListCtrl.updateList('Mixed Media'); $event.stopPropagation();" id="MixedMedia">Mixed Media</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </p>
+
+        <div>
+            <p>
+                Slicers:
+                <select name="timeOfDay" class="datepart" ng-model="timeOfDay" ng-change="navListCtrl.reduceList()" ng-options="timeOfDay for timeOfDay in navListCtrl.timesOfDay">
+                    <option></option>
+                </select>
+                <select name="partOfWeek" class="datepart" ng-model="partOfWeek" ng-change="navListCtrl.reduceList()" ng-options="partOfWeek for partOfWeek in navListCtrl.partsOfWeek">
+                    <option></option>
+                </select>
+                <select name="dayOfWeek" class="datepart" ng-model="dayOfWeek" ng-change="navListCtrl.reduceList()" ng-options="dayOfWeek for dayOfWeek in navListCtrl.daysOfWeek">
+                    <option></option>
+                </select>
+            </p>
+        </div>
+
+        <div style="position: relative; left: 500px;">
+            <ul>
+                <li ng-repeat="classInfo in navListCtrl.classInfoArray" id="{{classInfo.ProdNo}}">{{classInfo.Title}}
+                    <ul>
+                        <li>{{classInfo.SmallImage}}</li>
+                        <li>{{classInfo.URL}}</li>
+                        <li>{{classInfo.KeyWord.join(", ")}}</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </body>
+</html>
