@@ -90,8 +90,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Steps\BasicFunctionsSteps.cs" />
+    <Compile Include="EmptyXmlNodeList.cs" />
+    <Compile Include="Integration\Steps\BasicFunctionsSteps.cs" />
     <Compile Include="TimeInterval.cs" />
+    <Compile Include="UnitTests\MainTests.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -100,7 +102,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Features\BasicFunctions.feature.cs">
+    <Compile Include="Integration\Features\BasicFunctions.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>BasicFunctions.feature</DependentUpon>
@@ -128,7 +130,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Features\BasicFunctions.feature">
+    <None Include="Integration\Features\BasicFunctions.feature">
       <Generator>SpecFlowSingleFileGenerator</Generator>
       <LastGenOutput>BasicFunctions.feature.cs</LastGenOutput>
     </None>
@@ -152,7 +154,9 @@
       <Link>chromedriver.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="UnitTests\Resources\dummy.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup Label="DownloadChromeDriverBuildTask">
     <CoreBuildDependsOn>DownloadChromeDriver;$(CoreBuildDependsOn)</CoreBuildDependsOn>
